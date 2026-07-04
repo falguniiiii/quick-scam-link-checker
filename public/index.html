@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Scam Link Checker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <svg class="shield-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                    <div>
+                        <h1>Quick Scam Link Checker</h1>
+                        <p class="subtitle">Detect suspicious links instantly</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Input Section -->
+            <div class="input-card">
+                <label for="urlInput">Enter URL to check:</label>
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="2" y1="12" x2="22" y2="12"></line>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                        </svg>
+                        <input 
+                            type="text" 
+                            id="urlInput" 
+                            placeholder="https://example.com"
+                            autocomplete="off"
+                        >
+                    </div>
+                    <button id="checkBtn" class="check-btn">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                        <span id="btnText">Check Link</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Result Section -->
+            <div id="resultSection" class="result-section hidden">
+                <div id="resultCard" class="result-card">
+                    <div class="result-content">
+                        <div id="resultIcon" class="result-icon-wrapper"></div>
+                        <div class="result-details">
+                            <div class="result-header">
+                                <h3 id="resultTitle"></h3>
+                                <div id="scoreBadge" class="score-badge"></div>
+                            </div>
+                            <div class="analysis-results">
+                                <p class="analysis-label">Analysis Results:</p>
+                                <ul id="reasonsList"></ul>
+                            </div>
+                            <div id="warningBox" class="warning-box hidden">
+                                <p>⚡ Recommendation: Do not click this link. It may lead to phishing sites or malware.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Section -->
+            <div id="historySection" class="history-section hidden">
+                <h3 class="history-title">Recent Checks</h3>
+                <div id="historyList" class="history-list"></div>
+            </div>
+
+            <!-- Info Cards -->
+            <div class="info-cards">
+                <div class="info-card">
+                    <h4>🔍 What We Check</h4>
+                    <p>URL length, protocol security, domain extensions, and suspicious keywords</p>
+                </div>
+                <div class="info-card">
+                    <h4>⚡ Fast & Free</h4>
+                    <p>Instant analysis with no registration required. Check unlimited links.</p>
+                </div>
+                <div class="info-card">
+                    <h4>🛡️ Stay Safe</h4>
+                    <p>Protect yourself from phishing attacks and malicious websites.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>Built with Node.js + Express backend | Rule-based detection system</p>
+            <p>Always verify links before clicking. This tool provides basic analysis only.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
