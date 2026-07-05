@@ -335,52 +335,6 @@ curl http://localhost:3000/api/health
 
 ---
 
-## 📸 Screenshots
-
-### Main Interface
-```
-┌─────────────────────────────────────────┐
-│  🛡️ Quick Scam Link Checker            │
-│  Detect suspicious links instantly      │
-├─────────────────────────────────────────┤
-│                                         │
-│  Enter URL to check:                    │
-│  ┌─────────────────────────────────┐   │
-│  │ https://example.com             │   │
-│  └─────────────────────────────────┘   │
-│               [Check Link]              │
-│                                         │
-└─────────────────────────────────────────┘
-```
-
-### Safe Result
-```
-┌─────────────────────────────────────────┐
-│  ✓ Link Appears Safe    Score: 100/100 │
-│                                         │
-│  Analysis Results:                      │
-│  • No suspicious patterns detected      │
-│  • URL uses HTTPS protocol              │
-│  • Domain appears legitimate            │
-└─────────────────────────────────────────┘
-```
-
-### Suspicious Result
-```
-┌─────────────────────────────────────────┐
-│  ⚠ Suspicious Link      Score: 25/100  │
-│                                         │
-│  Analysis Results:                      │
-│  • Not using secure HTTPS protocol      │
-│  • Uses suspicious domain extension     │
-│  • Contains keywords: free, win         │
-│                                         │
-│  ⚡ Do not click this link!             │
-└─────────────────────────────────────────┘
-```
-
----
-
 ## 🔮 Future Enhancements
 
 ### Planned Features
