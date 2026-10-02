@@ -190,6 +190,7 @@ app.listen(PORT, '0.0.0.0', () => {
     console.log('Quick Scam Link Checker - Backend');
     console.log('=================================');
     console.log(`Server running on port ${PORT}`);
+    console.log(`Open: http://localhost:${PORT}`);
     console.log(`API endpoint: /api/check-url`);
     console.log(`Health check: /api/health`); 
     console.log('=================================');
