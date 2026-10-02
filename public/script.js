@@ -1,5 +1,5 @@
 // API Configuration
-const API_URL = 'http://localhost:3000/api/check-url';
+const API_URL = '/api/check-url';
 
 // DOM Elements
 const urlInput = document.getElementById('urlInput');
@@ -56,7 +56,7 @@ async function handleCheck() {
         
     } catch (error) {
         console.error('Error:', error);
-        showError('Failed to check URL. Please make sure the backend server is running.');
+        showError('Unable to analyze this URL right now. Please try again.');
     } finally {
         setLoadingState(false);
     }
@@ -233,4 +233,3 @@ function escapeHTML(str) {
 
 // Initialize
 console.log('Quick Scam Link Checker initialized');
-console.log('Make sure the backend server is running on http://localhost:3000');
