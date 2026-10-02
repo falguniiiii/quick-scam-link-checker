@@ -1,13 +1,10 @@
 const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 app.use(express.static('public')); // Serve static files from 'public' folder
 
 // Suspicious patterns configuration
@@ -112,7 +109,6 @@ function checkURL(url) {
         if (checks.isSafe) {
             checks.reasons.push('No obvious suspicious patterns detected');
             checks.reasons.push('URL uses HTTPS protocol');
-            checks.reasons.push('Domain appears legitimate');
         }
 
         return checks;
@@ -130,7 +126,7 @@ function checkURL(url) {
 app.post('/api/check-url', (req, res) => {
     const { url } = req.body;
 
-    if (!url) {
+    if (!url || typeof url !== 'string') {
         return res.status(400).json({
             error: 'URL is required',
             isSafe: false,
@@ -138,9 +134,18 @@ app.post('/api/check-url', (req, res) => {
             score: 0
         });
     }
+    
+    if (url.length > 2048) {
+        return res.status(400).json({
+            error: 'URL is too long',
+            isSafe: false,
+            reasons: ['URL exceeds the maximum allowed length'],
+            score: 0
+        });
+    }
 
     console.log(`Checking URL: ${url}`);
-
+    
     const result = checkURL(url);
 
     console.log(`Result: ${result.isSafe ? 'SAFE' : 'SUSPICIOUS'} (Score: ${result.score})`);
@@ -180,12 +185,12 @@ Content-Type: application/json
 });
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log('=================================');
     console.log('Quick Scam Link Checker - Backend');
     console.log('=================================');
-    console.log(`Server running on http://localhost:${PORT}`);
-    console.log(`API endpoint: http://localhost:${PORT}/api/check-url`);
-    console.log(`Health check: http://localhost:${PORT}/api/health`);
+    console.log(`Server running on port ${PORT}`);
+    console.log(`API endpoint: /api/check-url`);
+    console.log(`Health check: /api/health`); 
     console.log('=================================');
 });
