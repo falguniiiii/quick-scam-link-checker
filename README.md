@@ -1,546 +1,317 @@
 # 🛡️ Quick Scam Link Checker
 
-A web application to detect suspicious and phishing links using rule-based detection with Node.js backend and vanilla JavaScript frontend.
+A lightweight full-stack web application that analyzes URLs for suspicious patterns using a rule-based scoring system.
 
-![Project Banner](https://img.shields.io/badge/Security-Link%20Checker-blue)
-![Node.js](https://img.shields.io/badge/Node.js-v14%2B-green)
-![Express](https://img.shields.io/badge/Express-4.18.2-lightgrey)
+The project is built with Node.js, Express, HTML, CSS, and vanilla JavaScript. It does not use a database or external threat-intelligence service.
 
----
 
-## 📋 Table of Contents
+## 📌 Overview
 
-- [Features](#-features)
-- [Detection Rules](#-detection-rules)
-- [Tech Stack](#-tech-stack)
-- [Project Structure](#-project-structure)
-- [Installation & Setup](#-installation--setup)
-- [Usage](#-usage)
-- [API Documentation](#-api-documentation)
-- [Testing](#-testing-the-application)
-- [Screenshots](#-screenshots)
-- [Future Enhancements](#-future-enhancements)
-- [Troubleshooting](#-troubleshooting)
-- [Contributing](#-contributing)
+Quick Scam Link Checker accepts a URL and evaluates it against a set of predefined rules commonly associated with suspicious or deceptive URL structures.
 
----
+Each triggered rule reduces an initial score of 100. The application then returns:
+
+- a boolean result indicating whether any configured rule was triggered
+- a risk/safety score from 0 to 100
+- human-readable reasons explaining the triggered rules
+
+> **Important:** This is a heuristic, rule-based analyzer. A URL that does not trigger a configured rule is **not guaranteed to be safe**, and a flagged URL is not automatically proven to be malicious.
 
 ## ✨ Features
 
-- **🔍 Rule-Based Detection**: Analyzes URLs based on multiple security patterns
-- **📊 Safety Score System**: Rates links from 0-100 with color-coded indicators
-- **⚡ Real-time Analysis**: Instant feedback on URL safety
-- **📜 Check History**: Tracks your last 5 URL checks
-- **📱 Responsive Design**: Works seamlessly on desktop, tablet, and mobile
-- **🔌 RESTful API**: Backend API for URL checking with JSON responses
-- **🎨 Modern UI**: Clean, intuitive interface with smooth animations
-- **🚀 Fast & Lightweight**: No database required, instant results
+- 🔎 Rule-based URL analysis
+- 📊 Score from 0 to 100
+- ⚠️ Explanation of detected suspicious patterns
+- 🔐 HTTPS protocol check
+- 🌐 Suspicious TLD detection
+- 🖥️ IP-address URL detection
+- 🔗 `@` symbol detection
+- 🌳 Hostname structure check
+- 🔤 Suspicious keyword detection
+- 📏 URL length checks
+- 📝 Recent check history for the current browser session
+- 📱 Responsive frontend
+- 🚀 Express backend serving the frontend and API
+- ❤️ Health-check endpoint
+- 🛡️ Basic request validation and URL length protection
 
----
+## 🔍 Detection Rules
 
-## 🔐 Detection Rules
+The current analyzer applies these checks:
 
-The system checks for the following suspicious patterns:
+| Rule | What it checks | Score penalty |
+|---|---|---:|
+| URL length | URL longer than 80 characters | -20 |
+| HTTP protocol | URL uses `http:` instead of `https:` | -30 |
+| Suspicious TLD | Hostname ends with `.tk`, `.cf`, `.gq`, `.ml`, `.ga`, `.xyz`, or `.top` | -40 |
+| Suspicious keywords | URL contains configured suspicious terms | -15 per matched keyword |
+| IP address | Hostname contains an IPv4-style address | -25 |
+| `@` symbol | URL contains `@` | -30 |
+| Complex hostname | Hostname contains more than 3 dot-separated labels | -15 |
+| Double dots | URL contains `..` | -20 |
+| Very short hostname | Hostname is shorter than 5 characters | -15 |
 
-### 1. **URL Length Check**
-- Flags URLs longer than 80 characters
-- **Penalty**: -20 points
+The score starts at **100** and is reduced when rules are triggered. It is capped at a minimum of **0**.
 
-### 2. **Protocol Security**
-- Checks if URL uses HTTPS instead of HTTP
-- **Penalty**: -30 points for HTTP
+### Current keyword rules
 
-### 3. **Suspicious Domain Extensions**
-- Detects risky TLDs: `.tk`, `.cf`, `.gq`, `.ml`, `.ga`, `.xyz`, `.top`
-- **Penalty**: -40 points
+The analyzer currently checks for terms such as:
 
-### 4. **Phishing Keywords**
-- Scans for common phishing terms: free, win, bonus, lottery, prize, claim, winner, urgent, verify, account, suspended, congratulations, click, limited, offer, guarantee, risk-free
-- **Penalty**: -15 points per keyword
+```text
+free, win, bonus, lottery, prize, claim, winner,
+urgent, verify, account, suspended, congratulations,
+click, here, now, limited, offer, act, fast,
+guarantee, risk-free
+```
 
-### 5. **IP Address Detection**
-- Flags URLs using IP addresses instead of domain names
-- **Penalty**: -25 points
+These are heuristic signals only and can produce false positives because individual words are not proof of malicious intent.
 
-### 6. **URL Obfuscation (@)**
-- Detects the @ symbol used in phishing attacks
-- **Penalty**: -30 points
+## 🧠 How It Works
 
-### 7. **Multiple Subdomains**
-- Identifies URLs with more than 3 subdomains
-- **Penalty**: -15 points
-
-### 8. **Suspicious Characters**
-- Checks for double dots (..) and other patterns
-- **Penalty**: -20 points
-
-### 9. **Short Domain Names**
-- Flags domains shorter than 5 characters
-- **Penalty**: -15 points
-
----
+```text
+User enters URL
+       │
+       ▼
+Frontend sends POST /api/check-url
+       │
+       ▼
+Express validates the request
+       │
+       ▼
+URL is parsed and checked against rules
+       │
+       ├── URL length
+       ├── Protocol
+       ├── TLD
+       ├── Keywords
+       ├── IP address
+       ├── @ symbol
+       ├── Hostname structure
+       ├── Double dots
+       └── Hostname length
+       │
+       ▼
+Score + reasons returned as JSON
+       │
+       ▼
+Frontend displays the result
+```
 
 ## 🛠️ Tech Stack
 
-| Layer | Technology | Purpose |
-|-------|-----------|---------|
-| **Frontend** | HTML5, CSS3, Vanilla JavaScript | UI & User Interactions |
-| **Backend** | Node.js, Express.js | Server & API Logic |
-| **HTTP Client** | Fetch API | AJAX Requests |
-| **Styling** | Custom CSS (No Framework) | Responsive Design |
-| **Optional** | Google Safe Browsing API, PhishTank | Enhanced Threat Detection |
+| Layer | Technology |
+|---|---|
+| Frontend | HTML5, CSS3, Vanilla JavaScript |
+| Backend | Node.js, Express.js |
+| HTTP communication | Fetch API |
+| Development | npm, Nodemon |
+| Deployment-ready server | Express with `process.env.PORT` |
 
----
+No database is required.
 
 ## 📁 Project Structure
 
-```
-quick-scam-link-checker/
-│
-├── public/                    # Frontend files
-│   ├── index.html            # Main HTML page
-│   ├── style.css             # CSS styling
-│   └── script.js             # Frontend JavaScript
-│
-├── server.js                 # Express backend server
-├── package.json              # Node dependencies
-├── package-lock.json         # Lock file (auto-generated)
-├── node_modules/             # Dependencies (auto-generated)
-└── README.md                 # Project documentation
-```
-
----
-
-## 🚀 Installation & Setup
-
-### Prerequisites
-
-Before you begin, ensure you have the following installed:
-- **Node.js** (v14 or higher) - [Download](https://nodejs.org/)
-- **npm** (comes with Node.js)
-- A code editor (VS Code, Sublime, etc.)
-- A web browser (Chrome, Firefox, Edge)
-
-### Step 1: Clone or Download the Project
-
-```bash
-# Create project directory
-mkdir quick-scam-link-checker
-cd quick-scam-link-checker
-```
-
-### Step 2: Create Project Files
-
-Create the following folder structure and files:
-
-```
+```text
 quick-scam-link-checker/
 ├── public/
 │   ├── index.html
 │   ├── style.css
 │   └── script.js
 ├── server.js
-└── package.json
+├── package.json
+├── package-lock.json
+├── README.md
+└── .gitignore
 ```
 
-Copy the respective code into each file.
+`node_modules/` is created locally by npm and is intentionally excluded from Git.
 
-### Step 3: Install Dependencies
+## 🔌 API
 
-Open terminal in the project root and run:
+### `POST /api/check-url`
 
-```bash
-npm install
-```
-
-This will install:
-- `express` - Web framework
-- `cors` - Cross-Origin Resource Sharing
-- `body-parser` - Request body parsing
-
-### Step 4: Start the Server
-
-```bash
-npm start
-```
-
-You should see:
-```
-=================================
-Quick Scam Link Checker - Backend
-=================================
-Server running on http://localhost:3000
-API endpoint: http://localhost:3000/api/check-url
-Health check: http://localhost:3000/api/health
-=================================
-```
-
-### Step 5: Open the Application
-
-Open your browser and navigate to:
-```
-http://localhost:3000
-```
-
----
-
-## 💻 Usage
-
-### Basic Usage
-
-1. **Enter a URL** in the input field
-2. **Click "Check Link"** button or press Enter
-3. **View the results**:
-   - Green = Safe ✅
-   - Red = Suspicious ⚠️
-4. **Check the safety score** (0-100)
-5. **Read detailed analysis** of why the link is flagged
-6. **Review recent checks** in the history section
-
-### Example URLs to Test
-
-#### ✅ Safe URLs
-```
-https://google.com
-https://wikipedia.org
-https://github.com
-https://stackoverflow.com
-```
-
-#### ⚠️ Suspicious URLs
-```
-http://freebonus.tk/win
-http://192.168.1.1/phishing
-https://verify-account-now.cf
-http://example.com@malicious.com
-http://urgent-prize-claim.gq/winner
-```
-
----
-
-## 🔌 API Documentation
-
-### Endpoint: Check URL
-
-**POST** `/api/check-url`
-
-Check a URL for suspicious patterns.
+Analyzes a submitted URL.
 
 #### Request
 
-```http
-POST /api/check-url HTTP/1.1
-Content-Type: application/json
-
+```json
 {
   "url": "https://example.com"
 }
 ```
 
-#### Response (Safe URL)
+#### Example response
 
 ```json
 {
   "isSafe": true,
   "reasons": [
     "No obvious suspicious patterns detected",
-    "URL uses HTTPS protocol",
-    "Domain appears legitimate"
+    "URL uses HTTPS protocol"
   ],
   "score": 100
 }
 ```
 
-#### Response (Suspicious URL)
+If one or more rules are triggered, the response includes `isSafe: false`, a lower score, and the corresponding reasons.
 
-```json
-{
-  "isSafe": false,
-  "reasons": [
-    "Not using secure HTTPS protocol",
-    "Uses suspicious domain extension",
-    "Contains suspicious keywords: free, win"
-  ],
-  "score": 25
-}
-```
+### `GET /api/health`
 
-#### Error Response
+Returns the current API health status.
 
-```json
-{
-  "error": "URL is required",
-  "isSafe": false,
-  "reasons": ["No URL provided"],
-  "score": 0
-}
-```
-
-### Endpoint: Health Check
-
-**GET** `/api/health`
-
-Check if the API is running.
-
-#### Response
+Example:
 
 ```json
 {
   "status": "OK",
   "message": "Quick Scam Link Checker API is running",
-  "timestamp": "2025-10-05T10:30:00.000Z"
+  "timestamp": "2026-10-03T00:00:00.000Z"
 }
 ```
 
----
+The timestamp is generated dynamically when the request is made.
 
-## 🧪 Testing the Application
+## 💻 Local Setup
 
-### Manual Testing
+### Prerequisites
 
-1. **Test Safe URLs**: Verify that legitimate websites get high scores
-2. **Test Suspicious URLs**: Confirm phishing patterns are detected
-3. **Test Invalid URLs**: Enter gibberish to test error handling
-4. **Test History**: Check multiple URLs and verify history updates
-5. **Test Responsiveness**: Open on mobile devices
+- Node.js 18 or higher
+- npm
+- A modern web browser
 
-### Using cURL
+### 1. Clone the repository
 
 ```bash
-# Test safe URL
-curl -X POST http://localhost:3000/api/check-url \
-  -H "Content-Type: application/json" \
-  -d '{"url":"https://google.com"}'
-
-# Test suspicious URL
-curl -X POST http://localhost:3000/api/check-url \
-  -H "Content-Type: application/json" \
-  -d '{"url":"http://freebonus.tk/win"}'
-
-# Health check
-curl http://localhost:3000/api/health
+git clone https://github.com/falguniiiii/quick-scam-link-checker.git
 ```
 
-### Using Postman
+### 2. Enter the project directory
 
-1. Create a new POST request to `http://localhost:3000/api/check-url`
-2. Set header: `Content-Type: application/json`
-3. Set body (raw JSON):
+```bash
+cd quick-scam-link-checker
+```
+
+### 3. Install dependencies
+
+```bash
+npm install
+```
+
+### 4. Start the application
+
+```bash
+npm start
+```
+
+The server uses port `3000` locally by default.
+
+Open:
+
+```text
+http://localhost:3000
+```
+
+The server also supports a deployment-provided `PORT` environment variable.
+
+### Development mode
+
+For development with automatic server restarts:
+
+```bash
+npm run dev
+```
+
+## 🧪 Testing
+
+You can test the application directly through the browser.
+
+Try a normal HTTPS URL such as:
+
+```text
+https://example.com
+```
+
+You can also test URLs containing different patterns to observe how individual rules affect the score.
+
+For API testing, send a JSON `POST` request to:
+
+```text
+/api/check-url
+```
+
+with:
+
 ```json
 {
-  "url": "http://example.tk/free"
+  "url": "https://example.com"
 }
 ```
-4. Send and view response
 
----
+## ⚠️ Limitations
 
-## 🔮 Future Enhancements
+This project performs **static URL-pattern analysis**. It does not:
 
-### Planned Features
+- visit or execute the destination website
+- scan website content
+- inspect downloaded files
+- query live threat-intelligence databases
+- verify domain ownership or reputation
+- guarantee that a URL is safe
+- guarantee that a flagged URL is malicious
 
-- [ ] **API Integration**
-  - Google Safe Browsing API
-  - VirusTotal API
-  - PhishTank Database
+False positives and false negatives are possible.
 
-- [ ] **Database Integration**
-  - MongoDB for storing check history
-  - User accounts and saved checks
-  - Threat pattern analytics
+The result should therefore be treated as a warning signal rather than a definitive security verdict.
 
-- [ ] **Machine Learning**
-  - Train ML model on phishing datasets
-  - Improve detection accuracy
-  - Adaptive learning from new threats
+## 🔐 Security and Input Handling
 
-- [ ] **Browser Extension**
-  - Chrome/Firefox extension
-  - Real-time URL checking while browsing
-  - Automatic warnings on suspicious links
+The backend includes basic request protections:
 
-- [ ] **Mobile App**
-  - React Native mobile version
-  - Push notifications for threats
-  - QR code scanning
+- JSON request parsing through Express
+- validation that a URL is provided as a string
+- maximum accepted URL length of 2048 characters
+- score clamping so the result cannot fall below 0
+- frontend HTML escaping when displaying URLs in recent-check history
 
-- [ ] **Advanced Features**
-  - Bulk URL checking
-  - URL shortener detection
-  - Screenshot preview
-  - Domain WHOIS lookup
-  - SSL certificate validation
+The project does not require API keys or other secrets in its current implementation.
 
----
+## 🚀 Deployment
 
-## 🐛 Troubleshooting
+The application is structured so that Express serves both:
 
-### Common Issues
+1. the static frontend from `public/`
+2. the URL-analysis API
 
-#### Issue 1: "Failed to check URL" Error
+For a platform such as Render, the typical configuration is:
 
-**Problem**: Frontend can't connect to backend
-
-**Solutions**:
-- Make sure the server is running (`npm start`)
-- Check if port 3000 is available
-- Verify `API_URL` in `script.js` matches your server address
-- Check for CORS issues (should be handled by backend)
-
-```bash
-# Check if server is running
-curl http://localhost:3000/api/health
+**Build command**
+```text
+npm install
 ```
 
-#### Issue 2: "npm install" Fails
-
-**Problem**: Package installation errors
-
-**Solutions**:
-- Delete `node_modules` folder and `package-lock.json`
-- Run `npm cache clean --force`
-- Run `npm install` again
-- Check your Node.js version (`node --version`)
-
-#### Issue 3: JSON Parse Error in package.json
-
-**Problem**: Invalid JSON format
-
-**Solutions**:
-- Validate JSON at [jsonlint.com](https://jsonlint.com/)
-- Remove any comments or trailing commas
-- Use proper double quotes
-- Ensure file is saved in UTF-8 encoding
-
-#### Issue 4: Port 3000 Already in Use
-
-**Problem**: Another application is using port 3000
-
-**Solutions**:
-```bash
-# On Windows
-netstat -ano | findstr :3000
-taskkill /PID <PID> /F
-
-# On Mac/Linux
-lsof -ti:3000 | xargs kill -9
-
-# Or change port in server.js
-const PORT = 3001; // Use different port
+**Start command**
+```text
+npm start
 ```
 
-#### Issue 5: Module Not Found Error
+The server listens on:
 
-**Problem**: Missing dependencies
-
-**Solutions**:
-```bash
-npm install express cors body-parser
+```js
+process.env.PORT || 3000
 ```
 
----
+and binds to `0.0.0.0`, allowing it to run in a hosted environment.
 
-## 🤝 Contributing
+## 🔮 Future Improvements
 
-This is a student project, but contributions are welcome!
+Possible improvements include:
 
-### How to Contribute
+- refining keyword rules to reduce false positives
+- adding more URL normalization and structural analysis
+- detecting additional deceptive URL patterns
+- integrating reputable threat-intelligence services
+- adding automated tests for detection rules
+- improving result explanations
+- adding persistent analysis history
+- exploring statistical or machine-learning-based classification as a separate enhancement
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-### Contribution Ideas
-
-- Add new detection rules
-- Improve UI/UX design
-- Integrate external APIs
-- Write unit tests
-- Improve documentation
-- Add internationalization (i18n)
-
----
-
-## 👨‍💻 Developer Information
-
-**Project**: Quick Scam Link Checker  
-**Version**: 1.0.0  
-**Course**: Web Development / Cybersecurity  
-**Technology**: Node.js + Express + Vanilla JavaScript  
-**Development Time**: Educational Project  
-
----
-
-## 🌐 Resources
-
-- [Node.js Documentation](https://nodejs.org/docs/)
-- [Express.js Guide](https://expressjs.com/)
-- [MDN Web Docs](https://developer.mozilla.org/)
-- [OWASP Phishing Guide](https://owasp.org/)
-- [Google Safe Browsing](https://safebrowsing.google.com/)
-
----
-
-## 📞 Support
-
-If you encounter any issues or have questions:
-
-1. Check the [Troubleshooting](#-troubleshooting) section
-2. Review the code comments in each file
-3. Contact your course instructor
-4. Search for similar issues online
-
----
-
-## ⚠️ Disclaimer
-
-**Important Security Notice:**
-
-This tool provides basic URL analysis for educational purposes and should NOT be the only security measure you rely on. 
-
-- Always exercise caution when clicking unknown links
-- Use multiple security tools and common sense
-- This is a learning project, not a production-ready security solution
-- For critical security needs, use professional security services
-- The detection rules are basic and may not catch all threats
-- False positives and false negatives can occur
-
-**Stay Safe Online! 🛡️**
-
----
-
-## 🎓 Educational Value
-
-This project demonstrates:
-
-- **Backend Development**: Express.js server creation
-- **Frontend Development**: DOM manipulation, Fetch API
-- **API Design**: RESTful endpoint implementation
-- **Security Concepts**: URL analysis, phishing detection
-- **Full-Stack Integration**: Frontend-backend communication
-- **Error Handling**: Graceful error management
-- **UI/UX Design**: Responsive, user-friendly interface
-- **Code Organization**: Separation of concerns
-
----
-
-## 🏆 Achievements
-
-- ✅ Working prototype with backend
-- ✅ Rule-based detection system
-- ✅ Modern, responsive UI
-- ✅ API documentation
-- ✅ Real-world application
-- ✅ Scalable architecture
-
----
-
-**Made with ❤️ for Cybersecurity and Web Development**
-
-**Star ⭐ this project if you found it helpful!**
-
----
-
-*Last Updated: July 2026*
