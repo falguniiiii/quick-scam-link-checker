@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quick Scam Link Checker</title>
+    <title>Quick Scam Link Checker | Rule-Based URL Risk Analysis</title>
+    <meta name="description" content="Analyze URLs for suspicious patterns using a rule-based risk scoring system.">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -37,12 +38,13 @@
                             <line x1="2" y1="12" x2="22" y2="12"></line>
                             <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
                         </svg>
-                        <input 
-                            type="text" 
-                            id="urlInput" 
-                            placeholder="https://example.com"
-                            autocomplete="off"
-                        >
+                       <input 
+                       type="url" 
+                       id="urlInput" 
+                       placeholder="https://example.com"
+                       autocomplete="url"
+                       aria-label="URL to check"
+                     >
                     </div>
                     <button id="checkBtn" class="check-btn">
                         <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
